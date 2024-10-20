@@ -1,0 +1,178 @@
+[
+	{
+		"usecase": {
+			"name": "Create a Rule in a List",
+			"scenario": "A user creates a rule that automatically moves tasks between lists based on specific conditions.",
+			"actors": "User",
+			"preconditions": [
+				"User is logged into Trello.",
+				"User has access to a board with at least one list and tasks (cards)."
+			],
+			"postconditions": "The rule is successfully created and applied to the specified list.",
+			"steps": [
+				"User navigates to a specific board.",
+				"User selects the list where the rule will be applied.",
+				"User clicks on 'Rules' or 'Automations' in the list's options.",
+				"User selects 'Create a Rule'.",
+				"User defines the trigger (e.g., due date approaching, label added).",
+				"User specifies the action (e.g., move card to another list).",
+				"User saves the rule."
+			]
+		},
+		"testcases": [
+			{
+				"name": "Valid Rule Creation",
+				"description": "Verify that the user can successfully create a valid rule.",
+				"input": {
+					"board": "Marketing Board",
+					"list": "To Do",
+					"trigger": "Due date in 1 day",
+					"action": "Move to 'In Progress'"
+				},
+				"expected": {
+					"outcome": "Rule is created and will move tasks from 'To Do' to 'In Progress' when the due date is in 1 day.",
+					"status": "Rule creation successful."
+				}
+			},
+			{
+				"name": "Create Rule Without Trigger",
+				"description": "Verify that the system shows an error when trying to create a rule without a trigger.",
+				"input": {
+					"board": "Marketing Board",
+					"list": "To Do",
+					"action": "Move to 'In Progress'"
+				},
+				"expected": {
+					"outcome": "System displays error: 'Please specify a trigger for the rule.'",
+					"status": "Rule creation failed."
+				}
+			},
+			{
+				"name": "Create Rule Without Action",
+				"description": "Verify that the system shows an error when trying to create a rule without an action.",
+				"input": {
+					"board": "Marketing Board",
+					"list": "To Do",
+					"trigger": "Due date in 1 day"
+				},
+				"expected": {
+					"outcome": "System displays error: 'Please specify an action for the rule.'",
+					"status": "Rule creation failed."
+				}
+			},
+			{
+				"name": "Create Rule with Invalid Trigger",
+				"description": "Verify that the system prevents creating a rule with an invalid trigger.",
+				"input": {
+					"board": "Marketing Board",
+					"list": "To Do",
+					"trigger": "Invalid Trigger",
+					"action": "Move to 'In Progress'"
+				},
+				"expected": {
+					"outcome": "System displays error: 'Invalid trigger specified.'",
+					"status": "Rule creation failed."
+				}
+			},
+			{
+				"name": "Create Rule Without Internet Connection",
+				"description": "Verify that the system handles a scenario where the user tries to create a rule without an active internet connection.",
+				"input": {
+					"board": "Marketing Board",
+					"list": "To Do",
+					"trigger": "Due date in 1 day",
+					"action": "Move to 'In Progress'",
+					"connection": "Offline"
+				},
+				"expected": {
+					"outcome": "System displays error: 'Network error. Please check your connection.'",
+					"status": "Rule creation failed."
+				}
+			}
+		]
+	},
+	{
+		"usecase": {
+			"name": "Archive a List",
+			"scenario": "A user archives a list to remove it from the board without deleting its contents.",
+			"actors": "User",
+			"preconditions": [
+				"User is logged into Trello.",
+				"User has access to a board with at least one list containing tasks (cards)."
+			],
+			"postconditions": "The list is successfully archived and is no longer visible on the board.",
+			"steps": [
+				"User navigates to a specific board.",
+				"User selects the list they want to archive.",
+				"User clicks on the 'More' button (three dots) next to the list's name.",
+				"User selects 'Archive this List' from the dropdown menu.",
+				"User confirms the action when prompted."
+			]
+		},
+		"testcases": [
+			{
+				"name": "Valid List Archiving",
+				"description": "Verify that the user can successfully archive a list.",
+				"input": {
+					"board": "Project Board",
+					"list": "Completed Tasks"
+				},
+				"expected": {
+					"outcome": "List 'Completed Tasks' is successfully archived and no longer visible on the board.",
+					"status": "Archiving successful."
+				}
+			},
+			{
+				"name": "Archive Already Archived List",
+				"description": "Verify that the system handles an attempt to archive a list that is already archived.",
+				"input": {
+					"board": "Project Board",
+					"list": "Archived List"
+				},
+				"expected": {
+					"outcome": "System displays error: 'List is already archived.'",
+					"status": "Archiving failed."
+				}
+			},
+			{
+				"name": "Archive List Without Confirmation",
+				"description": "Verify that the system shows an error when the user tries to archive a list without confirming.",
+				"input": {
+					"board": "Project Board",
+					"list": "To Do",
+					"confirm": false
+				},
+				"expected": {
+					"outcome": "System displays message: 'Archiving canceled.'",
+					"status": "Archiving action aborted."
+				}
+			},
+			{
+				"name": "Archive List Without Internet Connection",
+				"description": "Verify that the system handles a scenario where the user tries to archive a list without an active internet connection.",
+				"input": {
+					"board": "Project Board",
+					"list": "Ongoing Tasks",
+					"connection": "Offline"
+				},
+				"expected": {
+					"outcome": "System displays error: 'Network error. Please check your connection.'",
+					"status": "Archiving failed."
+				}
+			},
+			{
+				"name": "Archive List with Active Cards",
+				"description": "Verify that the system allows archiving a list even if it contains active cards.",
+				"input": {
+					"board": "Project Board",
+					"list": "In Progress"
+				},
+				"expected": {
+					"outcome": "List 'In Progress' is successfully archived with all cards retained in the archive.",
+					"status": "Archiving successful."
+				}
+			}
+		]
+	}	
+	
+]

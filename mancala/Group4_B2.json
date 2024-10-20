@@ -1,0 +1,1271 @@
+[
+  {
+    "usecase": {
+      "name": "Create a Board",
+      "scenario": "A user creates a new board to organize their tasks or projects.",
+      "actors": "User",
+      "preconditions": "User has a Trello account and is logged in.",
+      "steps": [
+        "User navigates to the dashboard",
+        "User clicks on 'Create New Board'",
+        "User enters the board name and optional settings like background or team visibility",
+        "User clicks 'Create' to finalize the board creation"
+      ]
+    },
+    "testcases": [
+      {
+        "name": "Valid Board Creation",
+        "description": "Verify that a user can successfully create a new board with valid details.",
+        "input": {
+          "boardName": "Project X",
+          "background": "blue",
+          "visibility": "private"
+        },
+        "expected": {
+          "outcome": "Board created successfully",
+          "status": "Active"
+        }
+      },
+      {
+        "name": "Empty Board Name",
+        "description": "Verify that the system handles the case where the user attempts to create a board without entering a name.",
+        "input": {
+          "boardName": "",
+          "background": "blue",
+          "visibility": "private"
+        },
+        "expected": {
+          "outcome": "Board creation failed",
+          "status": "Error: Name required"
+        }
+      },
+      {
+        "name": "Duplicate Board Name",
+        "description": "Verify that the system allows the creation of a board with a name that already exists.",
+        "input": {
+          "boardName": "Project X",
+          "background": "blue",
+          "visibility": "private"
+        },
+        "expected": {
+          "outcome": "Board created successfully",
+          "status": "Active"
+        }
+      }
+    ]
+  },
+
+  {
+    "usecase": {
+      "name": "Add a New List",
+      "scenario": "A user adds a new list to a board to organize tasks or items.",
+      "actors": "User",
+      "preconditions": "User has created or has access to a board.",
+      "steps": [
+        "User selects a board",
+        "User clicks on 'Add a list' at the end of the lists on the board",
+        "User enters a name for the new list",
+        "User clicks 'Add List' to confirm"
+      ]
+    },
+    "testcases": [
+      {
+        "name": "Valid List Addition",
+        "description": "Verify that a user can successfully add a new list with a valid name.",
+        "input": {
+          "board": "Project X",
+          "listName": "To Do"
+        },
+        "expected": {
+          "outcome": "List added successfully",
+          "status": "Visible"
+        }
+      },
+      {
+        "name": "Empty List Name",
+        "description": "Verify that the system handles the case where the user attempts to add a list without providing a name.",
+        "input": {
+          "board": "Project X",
+          "listName": ""
+        },
+        "expected": {
+          "outcome": "List addition failed",
+          "status": "Error: Name required"
+        }
+      },
+      {
+        "name": "Duplicate List Name",
+        "description": "Verify that the system allows the addition of a list with a name that already exists on the board.",
+        "input": {
+          "board": "Project X",
+          "listName": "To Do"
+        },
+        "expected": {
+          "outcome": "List added successfully",
+          "status": "Visible"
+        }
+      },
+      {
+        "name": "Exceed Maximum Open Lists",
+        "description": "Verify that the system prevents adding a new list when the board already has 475 open lists.",
+        "input": {
+          "board": "Project X",
+          "listName": "New List"
+        },
+        "expected": {
+          "outcome": "List addition failed",
+          "status": "Error: Maximum number of open lists reached"
+        }
+      },
+      {
+        "name": "Exceed Maximum Total Lists",
+        "description": "Verify that the system prevents adding a new list when the board has 2850 total lists (including archived).",
+        "input": {
+          "board": "Project X",
+          "listName": "New List"
+        },
+        "expected": {
+          "outcome": "List addition failed",
+          "status": "Error: Maximum number of total lists reached"
+        }
+      }
+    ]
+  },
+
+  {
+    "usecase": {
+      "name": "Add a Task (Card) to a List",
+      "scenario": "A user adds a new task (card) to a specific list on a Trello board to organize tasks.",
+      "actors": "User",
+      "preconditions": [
+        "User is logged into Trello.",
+        "User has access to an existing board with at least one list."
+      ],
+      "postconditions": "A new task (card) is successfully added to the selected list.",
+      "steps": [
+        "User navigates to a specific board.",
+        "User selects a list where they want to add a task.",
+        "User clicks on 'Add a card' at the bottom of the list.",
+        "User enters the name of the task in the input field.",
+        "User clicks 'Add Card' or presses Enter to finalize the task addition."
+      ]
+    },
+    "testcases": [
+      {
+        "name": "Valid Task Addition",
+        "description": "Verify that the user can successfully add a new task with valid details to a list.",
+        "input": {
+          "board": "Project Board",
+          "list": "To Do",
+          "taskName": "Design mockups"
+        },
+        "expected": {
+          "outcome": "Task is added to the 'To Do' list.",
+          "status": "Task added successfully."
+        }
+      },
+      {
+        "name": "Empty Task Name",
+        "description": "Verify that the system prevents adding a task without a name.",
+        "input": {
+          "board": "Project Board",
+          "list": "To Do",
+          "taskName": ""
+        },
+        "expected": {
+          "outcome": "The system shows an error or prevents the task from being added.",
+          "status": "Task addition failed with a required field error."
+        }
+      },
+      {
+        "name": "Duplicate Task Name in the Same List",
+        "description": "Verify that the system allows adding tasks with duplicate names in the same list.",
+        "input": {
+          "board": "Project Board",
+          "list": "To Do",
+          "taskName": "Design mockups"
+        },
+        "expected": {
+          "outcome": "The system allows the task with the same name to be added.",
+          "status": "Task added successfully with duplicate name."
+        }
+      },
+      {
+        "name": "Exceed Maximum Task Length",
+        "description": "Verify that the system handles the case where the task name exceeds the maximum character limit.",
+        "input": {
+          "board": "Project Board",
+          "list": "To Do",
+          "taskName": "<string_exceeding_max_length>"
+        },
+        "expected": {
+          "outcome": "The system displays an error message indicating the task name is too long.",
+          "status": "Task addition failed with a length error."
+        }
+      },
+      {
+        "name": "Add Task to a Full List",
+        "description": "Verify that the system prevents adding a task when the list has reached the maximum number of cards allowed.",
+        "input": {
+          "board": "Project Board",
+          "list": "To Do",
+          "taskName": "New Task"
+        },
+        "expected": {
+          "outcome": "The system shows an error message indicating the maximum number of tasks in the list has been reached.",
+          "status": "Task addition failed with an error indicating list capacity is full."
+        }
+      },
+      {
+        "name": "Task Addition Without Internet Connection",
+        "description": "Verify that the system handles a scenario where the user tries to add a task without an active internet connection.",
+        "input": {
+          "board": "Project Board",
+          "list": "To Do",
+          "taskName": "Design mockups",
+          "connection": "Offline"
+        },
+        "expected": {
+          "outcome": "The system shows an error indicating that an internet connection is required to add the task.",
+          "status": "Task addition failed due to lack of internet connection."
+        }
+      },
+      {
+        "name": "Task Addition with Special Characters",
+        "description": "Verify that the system allows adding a task name with special characters, including emojis and symbols.",
+        "input": {
+          "board": "Project Board",
+          "list": "To Do",
+          "taskName": "💻 Fix UI bugs #urgent"
+        },
+        "expected": {
+          "outcome": "The system successfully adds the task with special characters.",
+          "status": "Task added successfully with special characters."
+        }
+      }
+    ]
+  },
+
+  {
+    "use_cases": {
+      "name": "Add Labels to a Card",
+      "description": "User adds color-coded labels to categorize or prioritize cards.",
+      "preconditions": "User must be logged in and have access to a board with cards.",
+      "postconditions": "Labels are added to the selected card."
+    },
+    "test_cases": [
+      {
+        "scenario": "Add a label to a card successfully",
+        "input": {
+          "label_name": "Priority",
+          "label_color": "Green"
+        },
+        "steps": [
+          "Log in to Trello.",
+          "Open an existing board.",
+          "Select a card.",
+          "Click 'Labels' button.",
+          "Choose 'Priority' label with 'Green' color.",
+          "Apply the label."
+        ],
+        "expected": "Label 'Priority' with color 'Green' is successfully added to the card.",
+        "status": "done"
+      },
+      {
+        "scenario": "Add multiple labels to a card",
+        "input": {
+          "labels": [
+            { "label_name": "Priority", "label_color": "Green" },
+            { "label_name": "Bug", "label_color": "Red" }
+          ]
+        },
+        "steps": [
+          "Log in to Trello.",
+          "Open an existing board.",
+          "Select a card.",
+          "Click 'Labels' button.",
+          "Choose multiple labels 'Priority' and 'Bug'.",
+          "Apply the selected labels."
+        ],
+        "expected": "Labels 'Priority' and 'Bug' are added to the card.",
+        "status": "done"
+      },
+      {
+        "scenario": "Attempt to add a label without selecting a label",
+        "input": {},
+        "steps": [
+          "Log in to Trello.",
+          "Open an existing board.",
+          "Select a card.",
+          "Click 'Labels' button.",
+          "Click 'Apply' without selecting any label."
+        ],
+        "expected": "Error message: 'Please select a label before applying.'",
+        "status": "failed"
+      },
+      {
+        "scenario": "Attempt to add a label to a non-existent card",
+        "input": {
+          "card_id": "invalid_card_id"
+        },
+        "steps": [
+          "Log in to Trello.",
+          "Open an existing board.",
+          "Attempt to select a card that has been deleted.",
+          "Click 'Labels' button."
+        ],
+        "expected": "Error message: 'Card not found.'",
+        "status": "failed"
+      },
+      {
+        "scenario": "Add an empty label to a card",
+        "input": {
+          "label_name": "",
+          "label_color": ""
+        },
+        "steps": [
+          "Log in to Trello.",
+          "Open an existing board.",
+          "Select a card.",
+          "Click 'Labels' button.",
+          "Attempt to create a new label without entering a label name or color.",
+          "Click 'Create.'"
+        ],
+        "expected": "Error message: 'Label name and color are required.'",
+        "status": "failed"
+      },
+      {
+        "scenario": "Add a label to a card as a non-logged-in user",
+        "input": {
+          "label_name": "Priority",
+          "label_color": "Green"
+        },
+        "steps": [
+          "Open the Trello website without logging in.",
+          "Attempt to open a board and select a card.",
+          "Click 'Labels' button."
+        ],
+        "expected": "Error message: 'Please log in to perform this action.'",
+        "status": "failed"
+      },
+      {
+        "scenario": "Add a label to a card without sufficient permissions",
+        "input": {
+          "label_name": "Priority",
+          "label_color": "Green"
+        },
+        "steps": [
+          "Log in to Trello with a user account that has view-only access to the board.",
+          "Open the board and select a card.",
+          "Click 'Labels' button."
+        ],
+        "expected": "Error message: 'Insufficient permissions to add labels.'",
+        "status": "failed"
+      },
+      {
+        "scenario": "Add a duplicate label to a card",
+        "input": {
+          "label_name": "Priority",
+          "label_color": "Green"
+        },
+        "steps": [
+          "Log in to Trello.",
+          "Open an existing board.",
+          "Select a card with an existing 'Priority' label.",
+          "Click 'Labels' button.",
+          "Attempt to add the same 'Priority' label again."
+        ],
+        "expected": "Error message: 'Label already applied to this card.'",
+        "status": "failed"
+      },
+      {
+        "scenario": "Add a label to a card while network is disconnected",
+        "input": {
+          "label_name": "Priority",
+          "label_color": "Green"
+        },
+        "steps": [
+          "Log in to Trello.",
+          "Open an existing board.",
+          "Select a card.",
+          "Click 'Labels' button.",
+          "Disconnect from the internet.",
+          "Attempt to add the 'Priority' label."
+        ],
+        "expected": "Error message: 'Network error. Please check your connection.'",
+        "status": "failed"
+      },
+      {
+        "scenario": "Remove a label from a card",
+        "input": {
+          "label_name": "Priority"
+        },
+        "steps": [
+          "Log in to Trello.",
+          "Open an existing board.",
+          "Select a card with a 'Priority' label.",
+          "Click 'Labels' button.",
+          "Deselect the 'Priority' label."
+        ],
+        "expected": "'Priority' label is successfully removed from the card.",
+        "status": "done"
+      }
+    ]
+  },
+
+  {
+    "usecase": {
+      "name": "Add a Comment to a Card",
+      "scenario": "A user adds a comment to a card to provide feedback.",
+      "actors": "User",
+      "preconditions": [
+        "User is logged into Trello.",
+        "User has access to a card."
+      ],
+      "postconditions": "The comment is added to the card and visible to all team members.",
+      "steps": [
+        "User navigates to the specific card.",
+        "User clicks on the comment section.",
+        "User types the comment.",
+        "User clicks 'Add Comment.'"
+      ]
+    },
+    "testcases": [
+      {
+        "name": "Valid Comment Addition",
+        "description": "Verify that the user can successfully add a comment to a card.",
+        "input": {
+          "card": "Design Mockup",
+          "comment": "Looks great! Please make the text larger."
+        },
+        "expected": {
+          "outcome": "Comment is added and visible on the card.",
+          "status": "Comment added successfully."
+        }
+      },
+      {
+        "name": "Empty Comment Submission",
+        "description": "Verify that the system shows an error when trying to submit an empty comment.",
+        "input": {
+          "card": "Design Mockup",
+          "comment": ""
+        },
+        "expected": {
+          "outcome": "System displays error: 'Comment cannot be empty.'",
+          "status": "Comment submission failed."
+        }
+      },
+      {
+        "name": "Edit a Comment",
+        "description": "Verify that the user can edit an existing comment.",
+        "input": {
+          "card": "Design Mockup",
+          "originalComment": "Looks great!",
+          "editedComment": "Looks great! Please make the text larger."
+        },
+        "expected": {
+          "outcome": "Comment is updated with the new text.",
+          "status": "Comment edited successfully."
+        }
+      },
+      {
+        "name": "Delete a Comment",
+        "description": "Verify that the user can delete a comment from a card.",
+        "input": {
+          "card": "Design Mockup",
+          "comment": "Looks great!"
+        },
+        "expected": {
+          "outcome": "Comment is removed from the card.",
+          "status": "Comment deleted successfully."
+        }
+      }
+    ]
+  },
+
+  {
+    "usecase": {
+      "name": "Attach a File to a Task",
+      "scenario": "A user attaches a file to a specific task (card) to provide additional resources or context.",
+      "actors": "User",
+      "preconditions": [
+        "User is logged into Trello.",
+        "User has access to a board with at least one task (card).",
+        "The file is accessible on the user's device."
+      ],
+      "postconditions": "The file is successfully attached to the selected task (card).",
+      "steps": [
+        "User navigates to a specific board.",
+        "User selects a task (card) from a list.",
+        "User clicks on 'Attach' or 'Upload File' in the task's details.",
+        "User selects a file from their device and clicks 'Open' to upload.",
+        "User confirms the upload and the file is attached to the task."
+      ]
+    },
+    "testcases": [
+      {
+        "name": "Valid File Attachment",
+        "description": "Verify that the user can successfully attach a file to a task.",
+        "input": {
+          "board": "Development Board",
+          "taskName": "Update Documentation",
+          "file": "requirements.pdf"
+        },
+        "expected": {
+          "outcome": "File 'requirements.pdf' is successfully attached to the task.",
+          "status": "File attached successfully."
+        }
+      },
+      {
+        "name": "Attach File with Unsupported Format",
+        "description": "Verify that the system prevents attaching a file with an unsupported format.",
+        "input": {
+          "board": "Development Board",
+          "taskName": "Update Documentation",
+          "file": "malicious.exe"
+        },
+        "expected": {
+          "outcome": "System displays error: 'Unsupported file format.'",
+          "status": "File attachment failed."
+        }
+      },
+      {
+        "name": "Attach File with Large Size",
+        "description": "Verify that the system prevents attaching a file that exceeds the maximum size limit.",
+        "input": {
+          "board": "Development Board",
+          "taskName": "Update Documentation",
+          "file": "large_video.mp4"
+        },
+        "expected": {
+          "outcome": "System displays error: 'File size exceeds the maximum limit.'",
+          "status": "File attachment failed."
+        }
+      },
+      {
+        "name": "Remove Attached File",
+        "description": "Verify that the user can remove an attached file from a task.",
+        "input": {
+          "board": "Development Board",
+          "taskName": "Update Documentation",
+          "file": "requirements.pdf"
+        },
+        "expected": {
+          "outcome": "File 'requirements.pdf' is successfully removed from the task.",
+          "status": "File removed successfully."
+        }
+      },
+      {
+        "name": "Attach File Without Internet Connection",
+        "description": "Verify that the system handles cases where the user attempts to attach a file while offline.",
+        "input": {
+          "board": "Development Board",
+          "taskName": "Update Documentation",
+          "file": "requirements.pdf",
+          "connection": "Offline"
+        },
+        "expected": {
+          "outcome": "System displays error: 'Network error. Please check your connection.'",
+          "status": "File attachment failed."
+        }
+      }
+    ]
+  },
+
+  {
+    "usecase": {
+      "name": "Set Due Date for a Task",
+      "scenario": "A user sets a due date for a task (card) to track deadlines.",
+      "actors": "User",
+      "preconditions": [
+        "User is logged into Trello.",
+        "User has access to a board with at least one task (card)."
+      ],
+      "postconditions": "The due date is successfully applied to the selected task (card).",
+      "steps": [
+        "User navigates to a specific board.",
+        "User selects a task (card) from a list.",
+        "User clicks on 'Due Date' in the task's details.",
+        "User selects a date and time from the calendar.",
+        "User clicks 'Save' to apply the due date."
+      ]
+    },
+    "testcases": [
+      {
+        "name": "Valid Due Date Assignment",
+        "description": "Verify that the user can successfully assign a valid due date to a task.",
+        "input": {
+          "board": "Marketing Board",
+          "taskName": "Prepare Presentation",
+          "dueDate": "2024-10-01"
+        },
+        "expected": {
+          "outcome": "Due date '2024-10-01' is successfully assigned to the task.",
+          "status": "Due date set successfully."
+        }
+      },
+      {
+        "name": "Set Past Due Date",
+        "description": "Verify that the system prevents setting a past due date for a task.",
+        "input": {
+          "board": "Marketing Board",
+          "taskName": "Prepare Presentation",
+          "dueDate": "2023-09-01"
+        },
+        "expected": {
+          "outcome": "System displays error: 'Cannot set a due date in the past.'",
+          "status": "Due date setting failed."
+        }
+      },
+      {
+        "name": "Set Due Date Without Selecting a Date",
+        "description": "Verify that the system handles cases where the user tries to set a due date without selecting a date.",
+        "input": {
+          "board": "Marketing Board",
+          "taskName": "Prepare Presentation"
+        },
+        "expected": {
+          "outcome": "System displays error: 'Please select a due date.'",
+          "status": "Due date setting failed."
+        }
+      },
+      {
+        "name": "Change Due Date",
+        "description": "Verify that the user can change an existing due date for a task.",
+        "input": {
+          "board": "Marketing Board",
+          "taskName": "Prepare Presentation",
+          "newDueDate": "2024-10-05"
+        },
+        "expected": {
+          "outcome": "Due date is successfully changed to '2024-10-05'.",
+          "status": "Due date updated successfully."
+        }
+      },
+      {
+        "name": "Set Due Date Without Internet Connection",
+        "description": "Verify that the system handles cases where the user attempts to set a due date while offline.",
+        "input": {
+          "board": "Marketing Board",
+          "taskName": "Prepare Presentation",
+          "dueDate": "2024-10-01",
+          "connection": "Offline"
+        },
+        "expected": {
+          "outcome": "System displays error: 'Network error. Please check your connection.'",
+          "status": "Due date setting failed."
+        }
+      }
+    ]
+  },
+
+  {
+    "use_cases": {
+      "name": "Search for a Card",
+      "description": "User searches for a specific card within a board by entering keywords in the search bar.",
+      "preconditions": "User must be logged in and have access to a board with existing cards.",
+      "postconditions": "The relevant card(s) are displayed, or a 'No results' message is shown if no matching card is found."
+    },
+    "test_cases": [
+      {
+        "scenario": "Search for an existing card by exact title",
+        "input": {
+          "search_query": "Fix bug in login system"
+        },
+        "steps": [
+          "Log in to Trello.",
+          "Open an existing board with cards.",
+          "Enter 'Fix bug in login system' into the search bar.",
+          "Press 'Search'."
+        ],
+        "expected": "Card with the title 'Fix bug in login system' is displayed.",
+        "status": "done"
+      },
+      {
+        "scenario": "Search for a card using a partial keyword",
+        "input": {
+          "search_query": "bug"
+        },
+        "steps": [
+          "Log in to Trello.",
+          "Open an existing board with cards.",
+          "Enter 'bug' into the search bar.",
+          "Press 'Search'."
+        ],
+        "expected": "All cards containing the keyword 'bug' are displayed.",
+        "status": "done"
+      },
+      {
+        "scenario": "Search for a card using a keyword that does not exist",
+        "input": {
+          "search_query": "nonexistent keyword"
+        },
+        "steps": [
+          "Log in to Trello.",
+          "Open an existing board with cards.",
+          "Enter 'nonexistent keyword' into the search bar.",
+          "Press 'Search'."
+        ],
+        "expected": "A message 'No results found' is displayed.",
+        "status": "done"
+      },
+      {
+        "scenario": "Search for a card in an empty board",
+        "input": {
+          "search_query": "Any search term"
+        },
+        "steps": [
+          "Log in to Trello.",
+          "Open a board with no cards.",
+          "Enter 'Any search term' into the search bar.",
+          "Press 'Search'."
+        ],
+        "expected": "A message 'No results found' is displayed because there are no cards on the board.",
+        "status": "done"
+      },
+      {
+        "scenario": "Search for a card using special characters",
+        "input": {
+          "search_query": "@#$%"
+        },
+        "steps": [
+          "Log in to Trello.",
+          "Open an existing board with cards.",
+          "Enter '@#$%' into the search bar.",
+          "Press 'Search'."
+        ],
+        "expected": "A message 'No results found' is displayed if no card contains special characters.",
+        "status": "done"
+      },
+      {
+        "scenario": "Search for a card with an empty search query",
+        "input": {
+          "search_query": ""
+        },
+        "steps": [
+          "Log in to Trello.",
+          "Open an existing board with cards.",
+          "Leave the search bar empty.",
+          "Press 'Search'."
+        ],
+        "expected": "A message 'Please enter a search term' is displayed.",
+        "status": "failed"
+      },
+      {
+        "scenario": "Search for a card with a long search query (boundary case)",
+        "input": {
+          "search_query": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "steps": [
+          "Log in to Trello.",
+          "Open an existing board with cards.",
+          "Enter a 128-character long string into the search bar.",
+          "Press 'Search'."
+        ],
+        "expected": "A message 'Search term too long' is displayed.",
+        "status": "failed"
+      },
+      {
+        "scenario": "Search for a card while not logged in",
+        "input": {
+          "search_query": "Fix bug in login system"
+        },
+        "steps": [
+          "Open the Trello website without logging in.",
+          "Attempt to search for 'Fix bug in login system' in the search bar.",
+          "Press 'Search'."
+        ],
+        "expected": "Error message 'Please log in to perform this action' is displayed.",
+        "status": "failed"
+      },
+      {
+        "scenario": "Search for a card with network issues",
+        "input": {
+          "search_query": "Fix bug in login system"
+        },
+        "steps": [
+          "Log in to Trello.",
+          "Open an existing board with cards.",
+          "Enter 'Fix bug in login system' into the search bar.",
+          "Disconnect the internet.",
+          "Press 'Search'."
+        ],
+        "expected": "Error message 'Network error. Please check your connection' is displayed.",
+        "status": "failed"
+      }
+    ]
+  },
+
+  {
+    "usecase": {
+      "name": "Move a Task (Card) from One List to Another",
+      "scenario": "A user moves a task (card) from one list to another to update the task's status or progress.",
+      "actors": "User",
+      "preconditions": [
+        "User is logged into Trello.",
+        "User has access to a board with at least two lists and one task."
+      ],
+      "postconditions": "The selected task (card) is successfully moved from the source list to the target list.",
+      "steps": [
+        "User navigates to a specific board.",
+        "User selects the task (card) they want to move.",
+        "User clicks on the 'Move' option from the task's options menu.",
+        "User selects the target list from the dropdown menu.",
+        "User clicks 'Move' to confirm the action."
+      ]
+    },
+    "testcases": [
+      {
+        "name": "Valid Task Movement",
+        "description": "Verify that the user can successfully move a task from one list to another.",
+        "input": {
+          "board": "Project Board",
+          "sourceList": "To Do",
+          "targetList": "In Progress",
+          "taskName": "Design mockups"
+        },
+        "expected": {
+          "outcome": "The task 'Design mockups' is moved from 'To Do' to 'In Progress'.",
+          "status": "Task moved successfully."
+        }
+      },
+      {
+        "name": "Move Task to Same List",
+        "description": "Verify that the system handles the case where the user attempts to move a task to the same list.",
+        "input": {
+          "board": "Project Board",
+          "sourceList": "To Do",
+          "targetList": "To Do",
+          "taskName": "Design mockups"
+        },
+        "expected": {
+          "outcome": "The system allows the task to stay in the same list without any issues.",
+          "status": "Task remains in the same list."
+        }
+      },
+      {
+        "name": "Move Nonexistent Task",
+        "description": "Verify that the system handles the case where the user attempts to move a task that no longer exists.",
+        "input": {
+          "board": "Project Board",
+          "sourceList": "To Do",
+          "targetList": "In Progress",
+          "taskName": "Nonexistent Task"
+        },
+        "expected": {
+          "outcome": "The system shows an error message indicating that the task no longer exists.",
+          "status": "Task move failed with an error."
+        }
+      },
+      {
+        "name": "Move Task to a Full List",
+        "description": "Verify that the system prevents moving a task to a list that has reached its maximum capacity for tasks.",
+        "input": {
+          "board": "Project Board",
+          "sourceList": "To Do",
+          "targetList": "Completed",
+          "taskName": "Design mockups"
+        },
+        "expected": {
+          "outcome": "The system shows an error message indicating that the target list is full.",
+          "status": "Task move failed due to list capacity."
+        }
+      },
+      {
+        "name": "Move Task Without Internet Connection",
+        "description": "Verify that the system handles a scenario where the user tries to move a task without an active internet connection.",
+        "input": {
+          "board": "Project Board",
+          "sourceList": "To Do",
+          "targetList": "In Progress",
+          "taskName": "Design mockups",
+          "connection": "Offline"
+        },
+        "expected": {
+          "outcome": "The system shows an error message indicating that an internet connection is required to move the task.",
+          "status": "Task move failed due to lack of internet connection."
+        }
+      },
+      {
+        "name": "Move Task to a List with Special Characters in Name",
+        "description": "Verify that the system allows moving a task to a list that contains special characters in its name.",
+        "input": {
+          "board": "Project Board",
+          "sourceList": "To Do",
+          "targetList": "💡 Ideas",
+          "taskName": "Design mockups"
+        },
+        "expected": {
+          "outcome": "The system successfully moves the task to the list with special characters in its name.",
+          "status": "Task moved successfully."
+        }
+      }
+    ]
+  },
+
+  {
+    "usecase": {
+      "name": "Invite Team Members to a Board",
+      "scenario": "A user invites team members to collaborate on a project board.",
+      "actors": "User",
+      "preconditions": [
+        "User is logged into Trello.",
+        "User has access to a board they want to share."
+      ],
+      "postconditions": "Team members receive an invitation to join the board.",
+      "steps": [
+        "User navigates to the specific board.",
+        "User clicks on the 'Invite' button.",
+        "User enters the email addresses of team members.",
+        "User clicks 'Send Invitation.'"
+      ]
+    },
+    "testcases": [
+      {
+        "name": "Valid Team Member Invitation",
+        "description": "Verify that the user can successfully invite valid email addresses.",
+        "input": {
+          "board": "Project Board",
+          "emails": ["team_member1@example.com", "team_member2@example.com"]
+        },
+        "expected": {
+          "outcome": "Invitations are sent successfully.",
+          "status": "Invitations sent."
+        }
+      },
+      {
+        "name": "Invite Team Member with Invalid Email",
+        "description": "Verify that the system shows an error when trying to invite an invalid email address.",
+        "input": {
+          "board": "Project Board",
+          "emails": ["invalid-email"]
+        },
+        "expected": {
+          "outcome": "System displays error: 'Invalid email address.'",
+          "status": "Invitation failed."
+        }
+      },
+      {
+        "name": "Invite Team Member Without Email",
+        "description": "Verify that the system shows an error when trying to invite without an email.",
+        "input": {
+          "board": "Project Board",
+          "emails": [""]
+        },
+        "expected": {
+          "outcome": "System displays error: 'Please enter an email address.'",
+          "status": "Invitation failed."
+        }
+      }
+    ]
+  },
+
+  {
+    "usecase": {
+      "name": "Assign a Task to a User",
+      "scenario": "A user assigns a task (card) to a specific team member to ensure accountability.",
+      "actors": "User, Team Member",
+      "preconditions": [
+        "User is logged into Trello.",
+        "User has access to a board with at least one task (card).",
+        "Team members are added to the board."
+      ],
+      "postconditions": "The selected task (card) is successfully assigned to the team member.",
+      "steps": [
+        "User navigates to a specific board.",
+        "User selects the task (card) they want to assign.",
+        "User clicks on 'Members' in the task's details.",
+        "User selects the team member to assign the task to.",
+        "User clicks 'Save' or 'Close' to finalize the assignment."
+      ]
+    },
+    "testcases": [
+      {
+        "name": "Valid Task Assignment",
+        "description": "Verify that the user can successfully assign a task to a valid team member.",
+        "input": {
+          "board": "Development Board",
+          "taskName": "Complete API documentation",
+          "member": "John Doe"
+        },
+        "expected": {
+          "outcome": "Task is assigned to John Doe.",
+          "status": "Assignment successful."
+        }
+      },
+      {
+        "name": "Assign Task to Multiple Users",
+        "description": "Verify that the user can assign a task to multiple users simultaneously.",
+        "input": {
+          "board": "Development Board",
+          "taskName": "Design Landing Page",
+          "members": ["John Doe", "Jane Smith"]
+        },
+        "expected": {
+          "outcome": "Task is assigned to both John Doe and Jane Smith.",
+          "status": "Assignment successful."
+        }
+      },
+      {
+        "name": "Assign Task Without Selecting a Member",
+        "description": "Verify that the system shows an error when attempting to assign a task without selecting a team member.",
+        "input": {
+          "board": "Development Board",
+          "taskName": "Fix Bugs"
+        },
+        "expected": {
+          "outcome": "System displays error: 'Please select a member to assign the task.'",
+          "status": "Assignment failed."
+        }
+      },
+      {
+        "name": "Assign Task to Nonexistent Member",
+        "description": "Verify that the system prevents assigning a task to a nonexistent or removed team member.",
+        "input": {
+          "board": "Development Board",
+          "taskName": "Update UI",
+          "member": "Invalid User"
+        },
+        "expected": {
+          "outcome": "System displays error: 'Member not found.'",
+          "status": "Assignment failed."
+        }
+      },
+      {
+        "name": "Assign Task Without Internet Connection",
+        "description": "Verify that the system handles a scenario where the user tries to assign a task without an active internet connection.",
+        "input": {
+          "board": "Development Board",
+          "taskName": "Optimize Database",
+          "member": "John Doe",
+          "connection": "Offline"
+        },
+        "expected": {
+          "outcome": "System displays error: 'Network error. Please check your connection.'",
+          "status": "Assignment failed."
+        }
+      }
+    ]
+  },
+
+  {
+    "usecase": {
+      "name": "Receive Notifications for Card Updates",
+      "scenario": "A user receives notifications for updates made to cards they are watching.",
+      "actors": "User",
+      "preconditions": [
+        "User is logged into Trello.",
+        "User is watching a card."
+      ],
+      "postconditions": "User receives notifications for changes made to the watched card.",
+      "steps": [
+        "User navigates to the specific card.",
+        "User clicks on the 'Watch' button to start watching the card.",
+        "Another user makes an update to the card.",
+        "User receives a notification for the update."
+      ]
+    },
+    "testcases": [
+      {
+        "name": "Notification for Card Update",
+        "description": "Verify that the user receives a notification when the card they are watching is updated.",
+        "input": {
+          "card": "Design Mockup",
+          "update": "Change due date"
+        },
+        "expected": {
+          "outcome": "User receives notification: 'Design Mockup has been updated.'",
+          "status": "Notification received."
+        }
+      },
+      {
+        "name": "No Notification for Unwatched Card",
+        "description": "Verify that the user does not receive notifications for cards they are not watching.",
+        "input": {
+          "card": "To Do",
+          "update": "Change status to 'In Progress'"
+        },
+        "expected": {
+          "outcome": "No notification is sent to the user.",
+          "status": "No notification received."
+        }
+      }
+    ]
+  },
+
+  {
+    "usecase": {
+      "name": "Create a Rule in a List",
+      "scenario": "A user creates a rule that automatically moves tasks between lists based on specific conditions.",
+      "actors": "User",
+      "preconditions": [
+        "User is logged into Trello.",
+        "User has access to a board with at least one list and tasks (cards)."
+      ],
+      "postconditions": "The rule is successfully created and applied to the specified list.",
+      "steps": [
+        "User navigates to a specific board.",
+        "User selects the list where the rule will be applied.",
+        "User clicks on 'Rules' or 'Automations' in the list's options.",
+        "User selects 'Create a Rule'.",
+        "User defines the trigger (e.g., due date approaching, label added).",
+        "User specifies the action (e.g., move card to another list).",
+        "User saves the rule."
+      ]
+    },
+    "testcases": [
+      {
+        "name": "Valid Rule Creation",
+        "description": "Verify that the user can successfully create a valid rule.",
+        "input": {
+          "board": "Marketing Board",
+          "list": "To Do",
+          "trigger": "Due date in 1 day",
+          "action": "Move to 'In Progress'"
+        },
+        "expected": {
+          "outcome": "Rule is created and will move tasks from 'To Do' to 'In Progress' when the due date is in 1 day.",
+          "status": "Rule creation successful."
+        }
+      },
+      {
+        "name": "Create Rule Without Trigger",
+        "description": "Verify that the system shows an error when trying to create a rule without a trigger.",
+        "input": {
+          "board": "Marketing Board",
+          "list": "To Do",
+          "action": "Move to 'In Progress'"
+        },
+        "expected": {
+          "outcome": "System displays error: 'Please specify a trigger for the rule.'",
+          "status": "Rule creation failed."
+        }
+      },
+      {
+        "name": "Create Rule Without Action",
+        "description": "Verify that the system shows an error when trying to create a rule without an action.",
+        "input": {
+          "board": "Marketing Board",
+          "list": "To Do",
+          "trigger": "Due date in 1 day"
+        },
+        "expected": {
+          "outcome": "System displays error: 'Please specify an action for the rule.'",
+          "status": "Rule creation failed."
+        }
+      },
+      {
+        "name": "Create Rule with Invalid Trigger",
+        "description": "Verify that the system prevents creating a rule with an invalid trigger.",
+        "input": {
+          "board": "Marketing Board",
+          "list": "To Do",
+          "trigger": "Invalid Trigger",
+          "action": "Move to 'In Progress'"
+        },
+        "expected": {
+          "outcome": "System displays error: 'Invalid trigger specified.'",
+          "status": "Rule creation failed."
+        }
+      },
+      {
+        "name": "Create Rule Without Internet Connection",
+        "description": "Verify that the system handles a scenario where the user tries to create a rule without an active internet connection.",
+        "input": {
+          "board": "Marketing Board",
+          "list": "To Do",
+          "trigger": "Due date in 1 day",
+          "action": "Move to 'In Progress'",
+          "connection": "Offline"
+        },
+        "expected": {
+          "outcome": "System displays error: 'Network error. Please check your connection.'",
+          "status": "Rule creation failed."
+        }
+      }
+    ]
+  },
+  {
+    "usecase": {
+      "name": "Archive a List",
+      "scenario": "A user archives a list to remove it from the board without deleting its contents.",
+      "actors": "User",
+      "preconditions": [
+        "User is logged into Trello.",
+        "User has access to a board with at least one list containing tasks (cards)."
+      ],
+      "postconditions": "The list is successfully archived and is no longer visible on the board.",
+      "steps": [
+        "User navigates to a specific board.",
+        "User selects the list they want to archive.",
+        "User clicks on the 'More' button (three dots) next to the list's name.",
+        "User selects 'Archive this List' from the dropdown menu.",
+        "User confirms the action when prompted."
+      ]
+    },
+    "testcases": [
+      {
+        "name": "Valid List Archiving",
+        "description": "Verify that the user can successfully archive a list.",
+        "input": {
+          "board": "Project Board",
+          "list": "Completed Tasks"
+        },
+        "expected": {
+          "outcome": "List 'Completed Tasks' is successfully archived and no longer visible on the board.",
+          "status": "Archiving successful."
+        }
+      },
+      {
+        "name": "Archive Already Archived List",
+        "description": "Verify that the system handles an attempt to archive a list that is already archived.",
+        "input": {
+          "board": "Project Board",
+          "list": "Archived List"
+        },
+        "expected": {
+          "outcome": "System displays error: 'List is already archived.'",
+          "status": "Archiving failed."
+        }
+      },
+      {
+        "name": "Archive List Without Confirmation",
+        "description": "Verify that the system shows an error when the user tries to archive a list without confirming.",
+        "input": {
+          "board": "Project Board",
+          "list": "To Do",
+          "confirm": false
+        },
+        "expected": {
+          "outcome": "System displays message: 'Archiving canceled.'",
+          "status": "Archiving action aborted."
+        }
+      },
+      {
+        "name": "Archive List Without Internet Connection",
+        "description": "Verify that the system handles a scenario where the user tries to archive a list without an active internet connection.",
+        "input": {
+          "board": "Project Board",
+          "list": "Ongoing Tasks",
+          "connection": "Offline"
+        },
+        "expected": {
+          "outcome": "System displays error: 'Network error. Please check your connection.'",
+          "status": "Archiving failed."
+        }
+      },
+      {
+        "name": "Archive List with Active Cards",
+        "description": "Verify that the system allows archiving a list even if it contains active cards.",
+        "input": {
+          "board": "Project Board",
+          "list": "In Progress"
+        },
+        "expected": {
+          "outcome": "List 'In Progress' is successfully archived with all cards retained in the archive.",
+          "status": "Archiving successful."
+        }
+      }
+    ]
+  }
+]
